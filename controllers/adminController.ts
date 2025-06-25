@@ -69,7 +69,7 @@ class AdminController {
     }));
 
     res.render("data.handlebars", {
-      correctCsvFiles,
+      csvFiles: correctCsvFiles,
     });
   };
 }
