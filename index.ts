@@ -45,12 +45,12 @@ app.engine("handlebars", handlebars.engine({ defaultLayout: "main" }));
 app.set("views", path.resolve(__dirname, "./views"));
 app.set("view engine", "handlebars");
 
+app.get("/", controllers.authController.loginGet as any);
 app.get("/login", controllers.authController.loginGet as any);
-app.post("/login", controllers.authController.loginPost as any);
 
+app.post("/login", controllers.authController.loginPost as any);
 app.get("/upload", AuthMiddleware.middleware as any, controllers.adminController.uploadGet as any);
 app.post("/upload", AuthMiddleware.middleware as any, controllers.adminController.uploadPost as any);
-
 app.get("/data", AuthMiddleware.middleware as any, controllers.adminController.dataGet as any);
 
 console.log("moex_admin", "2)on(N91G8]TyXL3US£v");
