@@ -61,7 +61,7 @@ class AuthController {
       res.cookie("jwt", token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production", // В продакшене только через HTTPS
-        maxAge: 3600000 * 24 * 7, // 1 час
+        maxAge: 3600000 * 24 * 7, // 7 дней
         sameSite: "strict",
       });
 

@@ -65,7 +65,7 @@ class AdminController {
 
     const correctCsvFiles = csvFiles.map((csvFile) => ({
       path: csvFile.path,
-      createdAt: moment(csvFile.createdAt).format(),
+      createdAt: moment(csvFile.createdAt).format("YYYY.MM.DD HH:mm"),
     }));
 
     res.render("data.handlebars", {
