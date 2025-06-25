@@ -1,0 +1,92 @@
+<div class="container">
+  <div class="nav">
+    <a href="/data" class="nav-link">Просмотр файлов</a>
+  </div>
+  <h1 class="title">Загрузка CSV файла</h1>
+  <div class="upload-area" id="uploadArea">
+    <p id="uploadAreaText">Перетащите файл сюда или кликните для выбора</p>
+    <input type="file" id="fileInput" class="file-input" accept=".csv" />
+  </div>
+  <button class="btn btn-primary" id="uploadBtn">Загрузить</button>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const uploadArea = document.getElementById('uploadArea');
+    const uploadAreaText = document.getElementById('uploadAreaText');
+    const fileInput = document.getElementById('fileInput');
+    const uploadBtn = document.getElementById('uploadBtn');
+
+    // Обработка клика по области загрузки
+    uploadArea.addEventListener('click', () => fileInput.click());
+
+    // Обработка изменения выбранного файла
+    fileInput.addEventListener('change', handleFileSelection);
+
+    // Обработка нажатия кнопки загрузки
+    uploadBtn.addEventListener('click', handleFileUpload);
+
+    // Drag and Drop функционал
+    uploadArea.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      uploadArea.classList.add('dragover');
+    });
+
+    uploadArea.addEventListener('dragleave', () => {
+      uploadArea.classList.remove('dragover');
+    });
+
+    uploadArea.addEventListener('drop', (e) => {
+      e.preventDefault();
+      uploadArea.classList.remove('dragover');
+
+      if (e.dataTransfer.files.length) {
+        fileInput.files = e.dataTransfer.files;
+        handleFileSelection();
+      }
+    });
+
+    function handleFileSelection() {
+      if (fileInput.files.length === 0) return;
+
+      const file = fileInput.files[0];
+      uploadAreaText.textContent = file.name;
+    }
+
+    async function handleFileUpload() {
+      try {
+        if (fileInput.files.length === 0) {
+          alert('Пожалуйста, выберите файл');
+          return;
+        }
+
+        const file = fileInput.files[0];
+        const formData = new FormData();
+        formData.append('file', file);
+
+        const response = await fetch('/upload', {
+          method: 'POST',
+          body: formData
+        });
+
+        const result = await response.json();
+
+        if (result.status === "success") {
+          alert('Файл будет загружен в ближайшее время');
+          resetFileInput();
+          return;
+        }
+
+        throw new Error('Ошибка сервера при загрузке файла');
+      } catch (error) {
+        console.error('Ошибка загрузки:', error);
+        alert('Ошибка при загрузке файла');
+      }
+    }
+
+    function resetFileInput() {
+      fileInput.value = '';
+      uploadAreaText.textContent = 'Перетащите файл сюда или кликните для выбора';
+    }
+  });
+</script>

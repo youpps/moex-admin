@@ -1,0 +1,24 @@
+<div class="container">
+  <div class="nav">
+    <a href="/upload" class="nav-link">Загрузить файл</a>
+  </div>
+  <h1 class="title">Список файлов</h1>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Название</th>
+        <th>Дата создания</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each csvFiles}}
+      <tr>
+        <td>{{this.path}}</td>
+        <td>{{this.createdAt}}</td>
+      </tr>
+      {{/each}}
+    </tbody>
+  </table>
+
+  <a href="upload" class="btn btn-primary">Загрузить новый файл</a>
+</div>
