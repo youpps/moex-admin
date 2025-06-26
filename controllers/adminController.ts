@@ -13,14 +13,12 @@ class AdminController {
     const file = req.files?.file;
 
     if (!file || Array.isArray(file)) {
-      res.status(400).json({
+      return res.status(400).json({
         status: ResponseStatus.Error,
         data: {
           message: "Please upload a single file",
         },
       });
-
-      return;
     }
 
     // Создаем папку storage, если ее нет
@@ -46,13 +44,13 @@ class AdminController {
       }
 
       this.repositories.CSVFilesRepository.uploadFile(path.resolve(__dirname, "../storage", file.name), file.name);
+    });
 
-      res.status(200).json({
-        status: ResponseStatus.Success,
-        data: {
-          message: "File has been uploaded successfully",
-        },
-      });
+    return res.status(200).json({
+      status: ResponseStatus.Success,
+      data: {
+        message: "File has been uploaded successfully",
+      },
     });
   };
 
