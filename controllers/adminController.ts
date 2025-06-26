@@ -31,7 +31,7 @@ class AdminController {
     const filename = Date.now() + file.name;
 
     // Формируем путь для сохранения файла
-    const filePath = path.join(storagePath);
+    const filePath = path.join(storagePath, filename);
 
     // Перемещаем файл
     file.mv(filePath, (error: any) => {
