@@ -71,7 +71,6 @@ class CSVProcessor {
 
       await this.processCsvFile(connection);
       await connection.commit();
-      throw new Error("asdadsdsa");
       console.log("END OF UPLOADING");
     } catch (error) {
       console.error("Error during CSV import:", error);
@@ -84,17 +83,13 @@ class CSVProcessor {
   }
 
   private async deleteCsvFileRecord(connection: PoolConnection): Promise<void> {
-    console.log(this.csvFileId);
-
     if (!this.csvFileId) return;
 
     await connection.execute("DELETE FROM csv_files WHERE id = ? LIMIT 1", [this.csvFileId]);
   }
 
   private async insertCsvFileRecord(connection: PoolConnection): Promise<void> {
-    await connection.query("SET autocommit = 1");
     const [result] = await connection.execute("INSERT INTO csv_files (path) VALUES (?)", [this.fileName]);
-    await connection.query("SET autocommit = 0");
     this.csvFileId = (result as any).insertId;
   }
 
