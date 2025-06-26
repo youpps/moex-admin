@@ -63,20 +63,32 @@ class CSVProcessor {
   public async process(): Promise<void> {
     const connection = await this.pool.getConnection();
 
+    await this.insertCsvFileRecord(connection);
+
     try {
       await connection.beginTransaction();
       console.log("START OF UPLOADING");
 
-      await this.insertCsvFileRecord(connection);
       await this.processCsvFile(connection);
       await connection.commit();
       console.log("END OF UPLOADING");
     } catch (error) {
       console.error("Error during CSV import:", error);
+      if (this.csvFileId) {
+        // Удаляем запись о файле в случае ошибки
+        await this.deleteCsvFileRecord(connection);
+      }
+
       await connection.rollback();
       throw error;
     } finally {
       connection.release();
+    }
+  }
+
+  private async deleteCsvFileRecord(connection: PoolConnection): Promise<void> {
+    if (this.csvFileId) {
+      await connection.execute("DELETE FROM csv_files WHERE id = ?", [this.csvFileId]);
     }
   }
 
