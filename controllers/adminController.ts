@@ -30,7 +30,7 @@ class AdminController {
 
     const processFile = async () => {
       // Формируем путь для сохранения файла
-      const filePath = path.join(storagePath, file.name);
+      const filePath = path.join(storagePath, Date.now() + file.name);
 
       // Перемещаем файл
       file.mv(filePath, (error: any) => {

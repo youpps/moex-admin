@@ -74,11 +74,7 @@ class CSVProcessor {
       console.log("END OF UPLOADING");
     } catch (error) {
       console.error("Error during CSV import:", error);
-      if (this.csvFileId) {
-        // Удаляем запись о файле в случае ошибки
-        await this.deleteCsvFileRecord(connection);
-      }
-
+      await this.deleteCsvFileRecord(connection);
       await connection.rollback();
       throw error;
     } finally {
@@ -88,7 +84,7 @@ class CSVProcessor {
 
   private async deleteCsvFileRecord(connection: PoolConnection): Promise<void> {
     if (this.csvFileId) {
-      await connection.execute("DELETE FROM csv_files WHERE id = ?", [this.csvFileId]);
+      await connection.execute("DELETE FROM csv_files WHERE id = ? LIMIT 1", [this.csvFileId]);
     }
   }
 
