@@ -8,7 +8,39 @@
     <input type="file" id="fileInput" class="file-input" accept=".csv" />
   </div>
   <button class="btn btn-primary" id="uploadBtn">Загрузить</button>
+  <div id="loadingIndicator" class="loading-indicator" style="display: none;">
+    <div class="spinner"></div>
+    <p>Отправка файла на сервер...</p>
+  </div>
 </div>
+
+<style>
+  .loading-indicator {
+    margin-top: 20px;
+    text-align: center;
+    color: #555;
+  }
+
+  .spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-radius: 50%;
+    border-top: 4px solid #3498db;
+    width: 30px;
+    height: 30px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 10px;
+  }
+
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+</style>
 
 <script>
   document.addEventListener('DOMContentLoaded', () => {
@@ -16,6 +48,7 @@
     const uploadAreaText = document.getElementById('uploadAreaText');
     const fileInput = document.getElementById('fileInput');
     const uploadBtn = document.getElementById('uploadBtn');
+    const loadingIndicator = document.getElementById('loadingIndicator');
 
     // Обработка клика по области загрузки
     uploadArea.addEventListener('click', () => fileInput.click());
@@ -60,6 +93,10 @@
           return;
         }
 
+        // Показываем индикатор загрузки
+        loadingIndicator.style.display = 'block';
+        uploadBtn.disabled = true;
+
         const file = fileInput.files[0];
         const formData = new FormData();
         formData.append('file', file);
@@ -81,6 +118,10 @@
       } catch (error) {
         console.error('Ошибка загрузки:', error);
         alert('Ошибка при загрузке файла');
+      } finally {
+        // Скрываем индикатор загрузки в любом случае
+        loadingIndicator.style.display = 'none';
+        uploadBtn.disabled = false;
       }
     }
 
