@@ -28,36 +28,30 @@ class AdminController {
       fs.mkdirSync(storagePath);
     }
 
-    const processFile = async () => {
-      const filename = Date.now() + file.name;
+    const filename = Date.now() + file.name;
 
-      // Формируем путь для сохранения файла
-      const filePath = path.join(storagePath);
+    // Формируем путь для сохранения файла
+    const filePath = path.join(storagePath);
 
-      // Перемещаем файл
-      file.mv(filePath, (error: any) => {
-        if (error) {
-          res.status(500).json({
-            status: ResponseStatus.Error,
-            data: {
-              message: "Error uploading file",
-            },
-          });
+    // Перемещаем файл
+    file.mv(filePath, (error: any) => {
+      if (error) {
+        return res.status(500).json({
+          status: ResponseStatus.Error,
+          data: {
+            message: "Error uploading file",
+          },
+        });
+      }
 
-          return;
-        }
+      this.repositories.CSVFilesRepository.uploadFile(path.resolve(__dirname, "../storage", filename), filename);
 
-        this.repositories.CSVFilesRepository.uploadFile(path.resolve(__dirname, "../storage", filename), filename);
+      return res.status(200).json({
+        status: ResponseStatus.Success,
+        data: {
+          message: "File has been uploaded successfully",
+        },
       });
-    };
-
-    processFile();
-
-    return res.status(200).json({
-      status: ResponseStatus.Success,
-      data: {
-        message: "File has been uploaded successfully",
-      },
     });
   };
 
