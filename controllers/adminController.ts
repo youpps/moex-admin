@@ -4,6 +4,7 @@ import path from "path";
 import { Repositories } from "../repositories";
 import { ResponseStatus } from "../types/response";
 import moment from "moment";
+import fileUpload from "express-fileupload";
 
 class AdminController {
   constructor(private repositories: Repositories) {}
@@ -27,24 +28,28 @@ class AdminController {
       fs.mkdirSync(storagePath);
     }
 
-    // Формируем путь для сохранения файла
-    const filePath = path.join(storagePath, file.name);
+    const processFile = async () => {
+      // Формируем путь для сохранения файла
+      const filePath = path.join(storagePath, file.name);
 
-    // Перемещаем файл
-    file.mv(filePath, (error: any) => {
-      if (error) {
-        res.status(500).json({
-          status: ResponseStatus.Error,
-          data: {
-            message: "Error uploading file",
-          },
-        });
+      // Перемещаем файл
+      file.mv(filePath, (error: any) => {
+        if (error) {
+          res.status(500).json({
+            status: ResponseStatus.Error,
+            data: {
+              message: "Error uploading file",
+            },
+          });
 
-        return;
-      }
+          return;
+        }
 
-      this.repositories.CSVFilesRepository.uploadFile(path.resolve(__dirname, "../storage", file.name), file.name);
-    });
+        this.repositories.CSVFilesRepository.uploadFile(path.resolve(__dirname, "../storage", file.name), file.name);
+      });
+    };
+
+    processFile();
 
     return res.status(200).json({
       status: ResponseStatus.Success,
