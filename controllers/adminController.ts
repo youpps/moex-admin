@@ -28,7 +28,7 @@ class AdminController {
       fs.mkdirSync(storagePath);
     }
 
-    const filename = Date.now() + file.name;
+    const filename = `${file.name}_${Date.now()}`;
 
     // Формируем путь для сохранения файла
     const filePath = path.join(storagePath, filename);

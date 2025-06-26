@@ -75,8 +75,8 @@ class CSVProcessor {
       console.log("END OF UPLOADING");
     } catch (error) {
       console.error("Error during CSV import:", error);
-      await this.deleteCsvFileRecord(connection);
       await connection.rollback();
+      await this.deleteCsvFileRecord(connection);
       throw error;
     } finally {
       connection.release();
