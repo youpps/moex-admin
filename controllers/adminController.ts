@@ -36,6 +36,8 @@ class AdminController {
     // Перемещаем файл
     file.mv(filePath, (error: any) => {
       if (error) {
+        console.log(error);
+
         return res.status(500).json({
           status: ResponseStatus.Error,
           data: {
