@@ -95,6 +95,8 @@ body {
   border-radius: 4px;
   background-color: transparent;
   cursor: pointer;
+  border: none;
+  outline: none;
 }
 
 .nav-link:hover {
