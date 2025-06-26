@@ -81,7 +81,9 @@ class CSVProcessor {
   }
 
   private async insertCsvFileRecord(connection: PoolConnection): Promise<void> {
+    await connection.query("SET autocommit = 1");
     const [result] = await connection.execute("INSERT INTO csv_files (path) VALUES (?)", [this.fileName]);
+    await connection.query("SET autocommit = 1");
     this.csvFileId = (result as any).insertId;
   }
 
