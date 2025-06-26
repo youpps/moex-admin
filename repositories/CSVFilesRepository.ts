@@ -72,6 +72,7 @@ class CSVProcessor {
       await this.processCsvFile(connection);
       await connection.commit();
       console.log("END OF UPLOADING");
+      throw new Error("");
     } catch (error) {
       console.error("Error during CSV import:", error);
       await connection.rollback();
