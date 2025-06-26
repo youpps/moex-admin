@@ -47,6 +47,7 @@ app.set("view engine", "handlebars");
 
 app.get("/", controllers.authController.loginGet as any);
 app.get("/login", controllers.authController.loginGet as any);
+app.post("/logout", controllers.authController.logoutPost as any);
 
 app.post("/login", controllers.authController.loginPost as any);
 app.get("/upload", AuthMiddleware.middleware as any, controllers.adminController.uploadGet as any);

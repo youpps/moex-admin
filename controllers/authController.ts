@@ -83,7 +83,7 @@ class AuthController {
     }
   };
 
-  async logout(req: Request, res: Response) {
+  logoutPost = async (req: Request, res: Response) => {
     try {
       // Очищаем JWT куки
       res.clearCookie("jwt");
@@ -95,7 +95,7 @@ class AuthController {
         },
       });
     } catch (error) {}
-  }
+  };
 }
 
 export { AuthController };

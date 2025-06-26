@@ -1,6 +1,7 @@
 <div class="container">
   <div class="nav">
     <a href="/upload" class="nav-link">Загрузить файл</a>
+    <button class="nav-link" id="logout">Выйти</button>
   </div>
   <h1 class="title">Список файлов</h1>
   <table class="table">
@@ -22,3 +23,22 @@
 
   <a href="upload" class="btn btn-primary">Загрузить новый файл</a>
 </div>
+
+<script>
+  document.getElementById('logout').addEventListener('click', function () {
+    fetch('/logout', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+      .then(response => {
+        if (response.ok) {
+          window.location.href = '/login';
+        }
+      })
+      .catch(error => {
+        console.error('Ошибка при выходе:', error);
+      });
+  });
+</script>

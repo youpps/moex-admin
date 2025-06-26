@@ -93,6 +93,8 @@ body {
   text-decoration: none;
   padding: 0.5rem 1rem;
   border-radius: 4px;
+  background-color: transparent;
+  cursor: pointer;
 }
 
 .nav-link:hover {
