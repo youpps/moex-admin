@@ -42,7 +42,7 @@ ON DUPLICATE KEY UPDATE
     role_id = VALUES(role_id),
     active_menu_id = VALUES(active_menu_id)
     keyboard_menu = VALUES(keyboard_menu);`,
-        botUser.telegramId
+        [botUser.telegramId]
       );
 
       await connection.commit();
