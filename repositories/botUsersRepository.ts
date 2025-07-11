@@ -31,12 +31,27 @@ class BotUsersRepository {
   }
 
   async createBotUser(botUser: Pick<IBotUser, "telegramId" | "comment">) {
-    const [data]: any = await this.pool.query(
-      `INSERT INTO bot_users(telegram_id, comment) VALUES(:telegramId, :comment);`,
-      botUser
-    );
+    const connection = await this.pool.getConnection();
 
-    return data;
+    try {
+      await connection.query(`INSERT INTO bot_users(telegram_id, comment) VALUES(:telegramId, :comment);`, botUser);
+      await connection.query(
+        `INSERT INTO moex_bot.users (id, role_id, active_menu_id, keyboard_menu)
+VALUES (?, 2, 1, 'root')
+ON DUPLICATE KEY UPDATE
+    role_id = VALUES(role_id),
+    active_menu_id = VALUES(active_menu_id)
+    keyboard_menu = VALUES(keyboard_menu);`,
+        botUser.telegramId
+      );
+
+      await connection.commit();
+    } catch (e) {
+      console.log(e);
+      await connection.rollback();
+    } finally {
+      connection.release();
+    }
   }
 
   async updateBotUser(botUser: Pick<IBotUser, "id" | "telegramId" | "comment">) {
@@ -48,10 +63,25 @@ class BotUsersRepository {
     return data;
   }
 
-  async deleteBotUser(botUserId: number) {
-    const [data]: any = await this.pool.query(`DELETE FROM bot_users WHERE id = ? LIMIT 1;`, [botUserId]);
+  async deleteBotUser(botUser: IBotUser) {
+    const connection = await this.pool.getConnection();
 
-    return data;
+    try {
+      await connection.query(`DELETE FROM bot_users WHERE id = ? LIMIT 1;`, [botUser.id]);
+      await connection.query(
+        `UPDATE moex_bot.users
+SET role_id = 1, active_menu_id = 1, keyboard_menu = 'root'
+WHERE id = ?;`,
+        [botUser.telegramId]
+      );
+
+      await connection.commit();
+    } catch (e) {
+      console.log(e);
+      await connection.rollback();
+    } finally {
+      connection.release();
+    }
   }
 }
 

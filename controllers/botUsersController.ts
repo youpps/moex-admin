@@ -89,7 +89,20 @@ class BotUsersController {
     try {
       const botUserId = Number(req.body.botUserId);
 
-      await this.repositories.botUsersRepository.deleteBotUser(botUserId);
+      const botUser = await this.repositories.botUsersRepository.getOne({
+        id: botUserId,
+      });
+
+      if (!botUser) {
+        return res.status(404).json({
+          status: ResponseStatus.Error,
+          data: {
+            message: "Bot user is not found",
+          },
+        });
+      }
+
+      await this.repositories.botUsersRepository.deleteBotUser(botUser);
 
       return res.status(200).json({
         status: ResponseStatus.Success,
