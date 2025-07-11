@@ -32,6 +32,7 @@ class UploadController {
 
     // Формируем путь для сохранения файла
     const filePath = path.join(storagePath, filename);
+    console.log(filename);
 
     // Перемещаем файл
     file.mv(filePath, (error: any) => {
