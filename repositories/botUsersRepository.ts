@@ -34,6 +34,8 @@ class BotUsersRepository {
     const connection = await this.pool.getConnection();
 
     try {
+      await connection.beginTransaction();
+
       await connection.query(`INSERT INTO bot_users(telegram_id, comment) VALUES(:telegramId, :comment);`, botUser);
       await connection.query(
         `INSERT INTO moex_bot.users (id, role_id, active_menu_id, keyboard_menu)
@@ -67,6 +69,8 @@ ON DUPLICATE KEY UPDATE
     const connection = await this.pool.getConnection();
 
     try {
+      await connection.beginTransaction();
+
       await connection.query(`DELETE FROM bot_users WHERE id = ? LIMIT 1;`, [botUser.id]);
       await connection.query(
         `UPDATE moex_bot.users
