@@ -1,0 +1,212 @@
+<div class="container">
+    <div class="nav">
+        <a href="/upload" class="nav-link">Загрузить файл</a>
+        <a href="/data" class="nav-link">Файлы</a>
+        <a href="/professional-sources" class="nav-link">Профессиональные источники</a>
+
+        <button class="nav-link nav-link_button" id="logout">Выйти</button>
+    </div>
+
+    <h1 class="title">Список пользователей бота</h1>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Telegram ID</th>
+                <th>Комментарий</th>
+                <th>Дата создания</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each botUsers}}
+            <tr data-user-id="{{this.id}}">
+                <td>{{this.id}}</td>
+
+                <td>
+                    <input type="number" class="editable-field" data-field="telegramId" value="{{this.telegramId}}" />
+                </td>
+
+                <td>
+                    <input type="text" class="editable-field" data-field="comment" value="{{this.comment}}" />
+                </td>
+
+                <td>{{this.createdAt}}</td>
+                <td>
+                    <button class="btn-delete" data-user-id="{{this.id}}">Удалить</button>
+                </td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+
+    <button id="saveUsers" class="btn btn-primary">Сохранить пользователей</button>
+    <button id="createUser" class="btn btn-primary">Создать пользователя</button>
+</div>
+
+<script>
+    document.getElementById('saveUsers').addEventListener('click', () => {
+        const users = [];
+        const rows = document.querySelectorAll('tbody tr');
+
+        rows.forEach(row => {
+            const userId = row.getAttribute('data-user-id');
+            const telegramId = row.querySelector('[data-field="telegramId"]').value;
+            const comment = row.querySelector('[data-field="comment"]').value;
+
+            users.push({
+                id: parseInt(userId),
+                telegramId: parseInt(telegramId),
+                comment: comment
+            });
+        });
+
+        fetch('/bot-users/update', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ users })
+        })
+            .then(res => res.json())
+            .then(res => {
+                if (res.status === "success") {
+
+                    res.data.forEach((user) => {
+                        const row = document.querySelector(`[data-user-id="${user.id}"]`)
+                        row.querySelector('[data-field="telegramId"]').value = user.telegramId;
+                        row.querySelector('[data-field="comment"]').value = user.comment;
+                    })
+
+                    alert('Изменения сохранены успешно!');
+
+                    return
+                }
+
+
+                alert('Произошла ошибка при сохранении');
+            })
+            .catch(error => {
+                console.error('Ошибка:', error);
+                alert('Произошла ошибка при сохранении');
+            });
+    });
+
+    // Добавляем обработчики для кнопок удаления
+    document.querySelectorAll('.btn-delete').forEach(button => {
+        button.addEventListener('click', function () {
+            const userId = this.getAttribute('data-user-id');
+            if (confirm('Вы уверены, что хотите удалить этого пользователя?')) {
+                fetch('/bot-users/delete', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ botUserId: userId })
+                })
+                    .then(res => res.json())
+                    .then(res => {
+                        if (res.status === "success") {
+                            // Удаляем строку из таблицы
+                            const row = document.querySelector(`tr[data-user-id="${userId}"]`);
+                            if (row) {
+                                row.remove();
+                                alert('Пользователь успешно удален!');
+                            }
+                        } else {
+                            alert('Произошла ошибка при удалении пользователя');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Ошибка:', error);
+                        alert('Произошла ошибка при удалении пользователя');
+                    });
+            }
+        });
+    });
+</script>
+
+<script>
+    document.getElementById("createUser").addEventListener("click", () => {
+        const telegramId = prompt("Введите telegramId");
+        const comment = prompt("Введите комментарий для пользователя");
+
+        if (!telegramId || !comment) {
+            alert("Необходимо заполнить все поля");
+            return;
+        }
+
+        fetch('/bot-users/create', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ telegramId, comment })
+        })
+            .then(res => res.json())
+            .then(res => {
+                if (res.status === "success" && res.data) {
+                    const newUser = res.data;
+                    const tbody = document.querySelector('tbody');
+
+                    // Форматируем дату в нужный формат
+                    const createdAt = new Date(newUser.createdAt);
+                    const formattedDate = `${createdAt.getFullYear()}.${String(createdAt.getMonth() + 1).padStart(2, '0')}.${String(createdAt.getDate()).padStart(2, '0')} ${String(createdAt.getHours()).padStart(2, '0')}:${String(createdAt.getMinutes()).padStart(2, '0')}`;
+
+                    const newRow = document.createElement('tr');
+                    newRow.setAttribute('data-user-id', newUser.id);
+
+                    newRow.innerHTML = `
+                        <td>${newUser.id}</td>
+                        <td>
+                            <input type="number" class="editable-field" data-field="telegramId" value="${newUser.telegramId}" />
+                        </td>
+                        <td>
+                            <input type="text" class="editable-field" data-field="comment" value="${newUser.comment}" />
+                        </td>
+                        <td>${formattedDate}</td>
+                        <td>
+                            <button class="btn-delete" data-user-id="${newUser.id}">Удалить</button>
+                        </td>
+                    `;
+
+                    tbody.appendChild(newRow);
+
+                    // Добавляем обработчик для новой кнопки удаления
+                    newRow.querySelector('.btn-delete').addEventListener('click', function () {
+                        const userId = this.getAttribute('data-user-id');
+                        if (confirm('Вы уверены, что хотите удалить этого пользователя?')) {
+                            fetch('/bot-users/delete', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({ botUserId: userId })
+                            })
+                                .then(res => res.json())
+                                .then(res => {
+                                    if (res.status === "success") {
+                                        newRow.remove();
+                                        alert('Пользователь успешно удален!');
+                                    } else {
+                                        alert('Произошла ошибка при удалении пользователя');
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Ошибка:', error);
+                                    alert('Произошла ошибка при удалении пользователя');
+                                });
+                        }
+                    });
+
+                    alert('Пользователь успешно создан!');
+                } else {
+                    alert('Произошла ошибка при создании пользователя');
+                }
+            })
+            .catch(error => {
+                console.error('Ошибка:', error);
+                alert('Произошла ошибка при создании пользователя');
+            });
+    });
+</script>

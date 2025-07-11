@@ -1,11 +1,37 @@
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="public/css/main.css" />
-    <title>MOEX | Админ-панель</title>
-  </head>
-  <body>
-    {{{body}}}
-  </body>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="public/css/main.css" />
+  <title>MOEX | Админ-панель</title>
+</head>
+
+<body>
+  {{{body}}}
+
+  <script>
+    document.getElementById('logout')?.addEventListener('click', function () {
+      fetch('/logout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(res => res.json())
+        .then(res => {
+
+          if (res.status === "success") {
+            window.location.href = '/login';
+            return
+          }
+
+          console.error('Ошибка при выходе');
+        })
+        .catch(error => {
+          console.error('Ошибка при выходе:', error);
+        });
+    });
+  </script>
+</body>
+
 </html>

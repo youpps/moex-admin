@@ -1,7 +1,10 @@
 <div class="container">
   <div class="nav">
     <a href="/data" class="nav-link">Просмотр файлов</a>
-    <button class="nav-link" id="logout">Выйти</button>
+    <a href="/bot-users" class="nav-link">Пользователи бота</a>
+    <a href="/professional-sources" class="nav-link">Профессиональные источники</a>
+
+    <button class="nav-link nav-link_button" id="logout">Выйти</button>
   </div>
   <h1 class="title">Загрузка CSV файла</h1>
   <div class="upload-area" id="uploadArea">
@@ -131,24 +134,5 @@
       fileInput.value = '';
       uploadAreaText.textContent = 'Перетащите файл сюда или кликните для выбора';
     }
-  });
-</script>
-
-<script>
-  document.getElementById('logout').addEventListener('click', function () {
-    fetch('/logout', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-      .then(response => {
-        if (response.ok) {
-          window.location.href = '/login';
-        }
-      })
-      .catch(error => {
-        console.error('Ошибка при выходе:', error);
-      });
   });
 </script>

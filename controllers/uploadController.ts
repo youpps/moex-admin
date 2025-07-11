@@ -1,15 +1,15 @@
 import { Request, Response } from "express";
+import moment from "moment";
+import { Repositories } from "../repositories";
+import { IBotUser } from "../types/botUser";
+import { ResponseStatus } from "../types/response";
 import fs from "fs";
 import path from "path";
-import { Repositories } from "../repositories";
-import { ResponseStatus } from "../types/response";
-import moment from "moment";
-import fileUpload from "express-fileupload";
 
-class AdminController {
+class UploadController {
   constructor(private repositories: Repositories) {}
 
-  uploadPost = async (req: Request, res: Response) => {
+  upload = async (req: Request, res: Response) => {
     // Получаем файл (уверены, что он один)
     const file = req.files?.file;
 
@@ -57,22 +57,9 @@ class AdminController {
     });
   };
 
-  uploadGet = async (req: Request, res: Response) => {
+  page = async (req: Request, res: Response) => {
     res.render("upload.handlebars");
-  };
-
-  dataGet = async (req: Request, res: Response) => {
-    const csvFiles = await this.repositories.CSVFilesRepository.getAll();
-
-    const correctCsvFiles = csvFiles.map((csvFile) => ({
-      path: csvFile.path,
-      createdAt: moment(csvFile.createdAt).format("YYYY.MM.DD HH:mm"),
-    }));
-
-    res.render("data.handlebars", {
-      csvFiles: correctCsvFiles,
-    });
   };
 }
 
-export { AdminController };
+export { UploadController };

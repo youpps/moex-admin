@@ -7,9 +7,9 @@ import { JWT } from "../utils/jwt";
 class AuthController {
   constructor(private repositories: Repositories) {}
 
-  loginGet = (req: Request, res: Response) => res.render("login.handlebars");
+  page = (req: Request, res: Response) => res.render("login.handlebars");
 
-  loginPost = async (req: Request, res: Response) => {
+  login = async (req: Request, res: Response) => {
     try {
       const { login, password } = req.body;
 
@@ -83,7 +83,7 @@ class AuthController {
     }
   };
 
-  logoutPost = async (req: Request, res: Response) => {
+  logout = async (req: Request, res: Response) => {
     try {
       // Очищаем JWT куки
       res.clearCookie("jwt");

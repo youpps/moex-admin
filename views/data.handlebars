@@ -1,7 +1,10 @@
 <div class="container">
   <div class="nav">
     <a href="/upload" class="nav-link">Загрузить файл</a>
-    <button class="nav-link" id="logout">Выйти</button>
+    <a href="/bot-users" class="nav-link">Пользователи бота</a>
+    <a href="/professional-sources" class="nav-link">Профессиональные источники</a>
+
+    <button class="nav-link nav-link_button" id="logout">Выйти</button>
   </div>
   <h1 class="title">Список файлов</h1>
   <table class="table">
@@ -21,24 +24,5 @@
     </tbody>
   </table>
 
-  <a href="upload" class="btn btn-primary">Загрузить новый файл</a>
+  <a href="/upload" class="btn btn-primary">Загрузить новый файл</a>
 </div>
-
-<script>
-  document.getElementById('logout').addEventListener('click', function () {
-    fetch('/logout', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-      .then(response => {
-        if (response.ok) {
-          window.location.href = '/login';
-        }
-      })
-      .catch(error => {
-        console.error('Ошибка при выходе:', error);
-      });
-  });
-</script>

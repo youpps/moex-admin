@@ -45,14 +45,36 @@ app.engine("handlebars", handlebars.engine({ defaultLayout: "main" }));
 app.set("views", path.resolve(__dirname, "./views"));
 app.set("view engine", "handlebars");
 
-app.get("/", controllers.authController.loginGet as any);
-app.get("/login", controllers.authController.loginGet as any);
-app.post("/logout", controllers.authController.logoutPost as any);
+app.get("/", controllers.authController.page as any);
+app.get("/login", controllers.authController.page as any);
+app.post("/logout", controllers.authController.logout as any);
+app.post("/login", controllers.authController.login as any);
 
-app.post("/login", controllers.authController.loginPost as any);
-app.get("/upload", AuthMiddleware.middleware as any, controllers.adminController.uploadGet as any);
-app.post("/upload", AuthMiddleware.middleware as any, controllers.adminController.uploadPost as any);
-app.get("/data", AuthMiddleware.middleware as any, controllers.adminController.dataGet as any);
+app.get("/upload", AuthMiddleware.middleware as any, controllers.uploadController.page as any);
+app.post("/upload", AuthMiddleware.middleware as any, controllers.uploadController.upload as any);
+
+app.get("/data", AuthMiddleware.middleware as any, controllers.dataController.page as any);
+
+app.get("/bot-users", AuthMiddleware.middleware as any, controllers.botUsersController.page as any);
+app.post("/bot-users/update", AuthMiddleware.middleware as any, controllers.botUsersController.update as any);
+app.post("/bot-users/create", AuthMiddleware.middleware as any, controllers.botUsersController.create as any);
+app.post("/bot-users/delete", AuthMiddleware.middleware as any, controllers.botUsersController.delete as any);
+
+app.get(
+  "/professional-sources",
+  AuthMiddleware.middleware as any,
+  controllers.professionalSourcesController.page as any
+);
+app.post(
+  "/professional-sources/create",
+  AuthMiddleware.middleware as any,
+  controllers.professionalSourcesController.create as any
+);
+app.post(
+  "/professional-sources/delete",
+  AuthMiddleware.middleware as any,
+  controllers.professionalSourcesController.delete as any
+);
 
 console.log("moex_admin", "2)on(N91G8]TyXL3US£v");
 

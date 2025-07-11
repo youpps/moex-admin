@@ -84,8 +84,10 @@ body {
 /* Навигация */
 .nav {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
+  width: 100%;
   margin-bottom: 1rem;
+  gap: 1rem;
 }
 
 .nav-link {
@@ -97,6 +99,10 @@ body {
   cursor: pointer;
   border: none;
   outline: none;
+}
+
+.nav-link_button {
+  margin-left: auto;
 }
 
 .nav-link:hover {
